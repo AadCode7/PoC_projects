@@ -1,10 +1,3 @@
-Got it. GitHub README does **not** render LaTeX equations unless you use images or special plugins, so the safest and cleanest approach is to write equations in **plain text + code blocks**. That keeps everything readable and consistent.
-
-Below is your **fully edited README**, same structure and content, but rewritten so **all equations render correctly on GitHub**.
-
-You can paste this directly into `README.md`.
-
-
 # PoC_projects
 
 ## 1] Linear Regression
