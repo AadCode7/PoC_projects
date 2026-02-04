@@ -1,90 +1,225 @@
+Got it. GitHub README does **not** render LaTeX equations unless you use images or special plugins, so the safest and cleanest approach is to write equations in **plain text + code blocks**. That keeps everything readable and consistent.
+
+Below is your **fully edited README**, same structure and content, but rewritten so **all equations render correctly on GitHub**.
+
+You can paste this directly into `README.md`.
+
+
 # PoC_projects
 
-# 1] Linear Regression
+## 1] Linear Regression
 
 ### 1.1 — What and why
 
-Linear regression is a type of supervised machine-learning algorithm that learns from the labelled datasets and maps the data points with most optimized linear functions which can be used for prediction on new datasets.~ It's the simplest supervised learning algorithm for regression: transparent, fast, interpretable, and a foundation for more advanced methods. Use it for baseline modeling, understanding linear relationships, and for problems where interpretability matters. 
+Linear regression is a supervised machine learning algorithm that learns from labelled data and models the relationship between input features and a target variable using a linear function. The goal is to find the most optimized straight line or hyperplane that best fits the data and can be used to make predictions on unseen data.
+
+It is one of the simplest regression algorithms and is widely used because it is fast, interpretable, and mathematically well understood. Linear regression is often used as a baseline model and as a foundation for understanding more complex machine learning techniques.
 
 
 ### 1.2 — Linear regression — intuition and math
 
-We assume a dataset ((x^{(i)}, y^{(i)})*{i=1}^m). For a single example (x \in \mathbb{R}^n) (with bias term), the model predicts
-[
-\hat{y} = h*\theta(x) = \theta^T x = \sum_{j=0}^{n} \theta_j x_j,
-]
-where (x_0 = 1) (bias). The learning task is to find parameter vector (\theta) that gives predictions close to (y).
+Assume a dataset with `m` training examples:
 
-Define the mean squared error (MSE) cost:
-[
-J(\theta) = \frac{1}{2m} \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2.
-]
-Minimizing (J(\theta)) yields the best-fit linear model under squared-error. ([cs229.stanford.edu][2])
+```
+(x(1), y(1)), (x(2), y(2)), ..., (x(m), y(m))
+```
+
+Each input example `x` has `n` features. To handle the intercept term, we add a bias feature:
+
+```
+x0 = 1
+```
+
+The hypothesis (prediction function) of linear regression is:
+
+```
+y_hat = h_theta(x) = theta^T * x
+```
+
+Expanded form:
+
+```
+y_hat = theta0 * x0 + theta1 * x1 + theta2 * x2 + ... + thetan * xn
+```
+
+Here:
+
+* `theta` is the parameter vector
+* `theta0` is the bias (intercept)
+* `thetai` represents the weight for feature `xi`
+
+The objective is to find the values of `theta` such that the predicted values `y_hat` are as close as possible to the true values `y`.
+
+---
+
+### Mean Squared Error (Cost Function)
+
+To measure how well the model performs, we use the Mean Squared Error (MSE) cost function:
+
+```
+J(theta) = (1 / (2m)) * Σ (h_theta(x(i)) - y(i))^2
+```
+
+Where:
+
+* `m` is the number of training examples
+* `h_theta(x(i))` is the predicted value
+* `y(i)` is the actual value
+
+The factor `1 / (2m)` is used for mathematical convenience when taking derivatives.
+
+Minimizing this cost function results in the best-fit linear model under the squared-error assumption.
+
+Reference: Stanford CS229 Lecture Notes [2]
 
 
 ### 1.3 — Cost function and normal equation
 
-Because (J(\theta)) is a convex quadratic in (\theta), the global minimum can be solved analytically. In matrix form, with (X\in\mathbb{R}^{m\times (n+1)}) and (y\in\mathbb{R}^m),
-[
-\theta^* = (X^T X)^{-1} X^T y
-]
-provided (X^T X) is invertible. This is the normal equation. For small feature counts or when you want exact closed-form solution, this is convenient; for large-scale problems, iterative optimizers like gradient descent are often preferred. See a concise derivation here. ([eli.thegreenplace.net][3])
+The cost function `J(theta)` for linear regression is **convex**, meaning it has only one global minimum and no local minima.
+
+Because of this property, the optimal parameters can be solved analytically using the **Normal Equation**.
+
+In matrix form:
+
+```
+theta* = (X^T X)^(-1) X^T y
+```
+
+Where:
+
+* `X` is the design matrix of shape `(m, n+1)`
+* `y` is the target vector of shape `(m, 1)`
+* `X^T` is the transpose of `X`
+
+This method directly computes the optimal parameters without iteration.
+
+Pros:
+
+* No learning rate required
+* Exact solution
+
+Cons:
+
+* Computationally expensive for large feature sets
+* Matrix inversion can be numerically unstable
+
+For large datasets or high-dimensional problems, iterative methods like gradient descent are preferred.
+
+Reference: Eli Bendersky [3]
 
 
-# 2] Gradient descent 
+## 2] Gradient Descent
 
-Gradient Descent is an iterative optimization algorithm used to minimize a cost function by adjusting model parameters in the direction of the steepest descent of the function’s gradient. Gradient descent iteratively updates parameters to reduce the cost. The gradient of (J) w.r.t. (\theta_j) is
-[
-\frac{\partial J(\theta)}{\partial \theta_j} = \frac{1}{m}\sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}.
-]
+Gradient Descent is an iterative optimization algorithm used to minimize a cost function by updating model parameters in the direction of the steepest decrease of the function.
 
-Update rule (batch gradient descent):
-[
-\theta := \theta - \alpha \nabla_\theta J(\theta)
-]
-which expands to
-[
-\theta_j := \theta_j - \alpha \cdot \frac{1}{m}\sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}
-]
-for each (j). (\alpha) is the learning rate.
+Instead of solving for parameters analytically, gradient descent gradually moves toward the minimum by taking small steps proportional to the negative gradient.
 
-Variants:
 
-* Batch gradient descent: compute gradient on full dataset per update. Stable but can be slow per step. ([DataCamp][4])
-* Stochastic gradient descent (SGD): update using each individual example. Faster updates, more noisy, good for online/streaming settings. ([IBM][5])
-* Mini-batch: compromise — use small batches (e.g., 32, 64). Works well in practice and is the de-facto choice for many ML problems. ([ruder.io][6])
+### Gradient of the cost function
 
-Because linear regression's cost is convex, gradient descent will converge to the same global minimum (no local minima issues). ([cs229.stanford.edu][2])
+The partial derivative of the cost function with respect to a parameter `theta_j` is:
+
+```
+∂J(theta) / ∂theta_j = (1 / m) * Σ (h_theta(x(i)) - y(i)) * x_j(i)
+```
+
+This gradient tells us how much the cost function changes when `theta_j` is adjusted.
+
+
+### Update rule (Batch Gradient Descent)
+
+The general update rule is:
+
+```
+theta = theta - alpha * gradient
+```
+
+Expanded per parameter:
+
+```
+theta_j = theta_j - alpha * (1 / m) * Σ (h_theta(x(i)) - y(i)) * x_j(i)
+```
+
+Where:
+
+* `alpha` is the learning rate
+* All parameters are updated simultaneously
+
+
+### Variants of Gradient Descent
+
+* **Batch Gradient Descent**
+  Uses the entire dataset to compute gradients at each step. Stable but slow for large datasets.
+  Reference: DataCamp [4]
+
+* **Stochastic Gradient Descent (SGD)**
+  Updates parameters using one training example at a time. Faster but noisy updates.
+  Reference: IBM [5]
+
+* **Mini-batch Gradient Descent**
+  Uses small batches (e.g. 32 or 64 samples). Balances speed and stability.
+  This is the most commonly used variant in practice.
+  Reference: Ruder [6]
+
+Since the linear regression cost function is convex, gradient descent is guaranteed to converge to the global minimum.
+
+Reference: Stanford CS229 [2]
 
 
 ### 2.1 — Practical items: learning rate, scaling, regularization, convergence
 
-**Learning rate (\alpha):**
+#### Learning rate (alpha)
 
-* Too large: divergence or oscillation.
-* Too small: painfully slow convergence.
-  A typical tactic: start with a moderate (\alpha) (e.g., 0.01 — problem dependent), monitor loss, and use learning-rate schedules or adaptive optimizers for automation. ([ruder.io][6])
+* Too large: cost function may diverge or oscillate
+* Too small: convergence becomes very slow
 
-**Feature scaling / normalization:**
-Gradient descent benefits a lot from scaling features to similar ranges (standardization or min-max). If features vary by orders of magnitude, gradients move in imbalanced directions and convergence slows.
+A common strategy is to start with a moderate value such as `0.01`, monitor the loss, and adjust as needed.
 
-### 2.2 **Regularization (Ridge / L2, Lasso / L1):**
-To reduce overfitting and stabilize solutions when features are correlated, add penalty terms:
 
-* Ridge (L2): (J(\theta) + \frac{\lambda}{2m}|\theta|_2^2)
-* Lasso (L1): (J(\theta) + \frac{\lambda}{m}|\theta|_1)
-  Regularization also helps when (X^T X) is nearly singular. Scikit-learn has efficient solvers for these. ([scikit-learn.org][1])
+#### Feature scaling / normalization
 
-**Convergence checks:**
+Gradient descent converges much faster when features are on similar scales.
 
-* Monitor training loss vs iterations.
-* Stop when the absolute or relative change in loss falls below a tolerance or after a max number of epochs.
-* Use learning curves and validation set to detect under/overfitting.
+Common techniques:
+
+* Standardization (zero mean, unit variance)
+* Min-max scaling
+
+Without scaling, parameters associated with large-valued features dominate updates and slow convergence.
+
+### 2.2 — Regularization (Ridge / L2, Lasso / L1)
+
+Regularization helps prevent overfitting and improves numerical stability.
+
+**Ridge Regression (L2):**
+
+```
+J(theta) + (lambda / (2m)) * ||theta||^2
+```
+
+**Lasso Regression (L1):**
+
+```
+J(theta) + (lambda / m) * ||theta||_1
+```
+
+Where:
+
+* `lambda` controls the strength of regularization
+
+Regularization is especially useful when features are highly correlated or when `X^T X` is close to singular.
+
+### Convergence checks
+
+* Plot cost vs iterations
+* Stop training when loss improvement falls below a threshold
+* Use validation curves to detect overfitting or underfitting
 
 ### 2.3 — Common pitfalls and tips
 
-* Not scaling features: slows convergence and makes choosing a good learning rate hard.
-* Choosing learning rate by guesswork: use log-scale sweep and pick the largest stable (\alpha).
-* Not monitoring validation error: you might overfit without noticing.
-* Forgetting the bias term: include a column of ones or use intercept handling in libraries.
-* Using normal equation on very large feature sets: if (n) large, inversion of (X^T X) is expensive and numerically unstable; use iterative solvers or regularization. ([eli.thegreenplace.net][3])
+* Not scaling features leads to slow convergence
+* Poor learning rate selection causes divergence or slow training
+* Ignoring validation error can hide overfitting
+* Forgetting the bias term leads to incorrect models
+* Using the normal equation on very large feature sets is computationally expensive
+
