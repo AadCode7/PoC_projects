@@ -31,7 +31,7 @@ Because (J(\theta)) is a convex quadratic in (\theta), the global minimum can be
 provided (X^T X) is invertible. This is the normal equation. For small feature counts or when you want exact closed-form solution, this is convenient; for large-scale problems, iterative optimizers like gradient descent are often preferred. See a concise derivation here. ([eli.thegreenplace.net][3])
 
 
-# 4] Gradient descent 
+# 2] Gradient descent 
 
 Gradient Descent is an iterative optimization algorithm used to minimize a cost function by adjusting model parameters in the direction of the steepest descent of the function’s gradient. Gradient descent iteratively updates parameters to reduce the cost. The gradient of (J) w.r.t. (\theta_j) is
 [
@@ -57,7 +57,7 @@ Variants:
 Because linear regression's cost is convex, gradient descent will converge to the same global minimum (no local minima issues). ([cs229.stanford.edu][2])
 
 
-### 4.1 — Practical items: learning rate, scaling, regularization, convergence
+### 2.1 — Practical items: learning rate, scaling, regularization, convergence
 
 **Learning rate (\alpha):**
 
@@ -68,7 +68,7 @@ Because linear regression's cost is convex, gradient descent will converge to th
 **Feature scaling / normalization:**
 Gradient descent benefits a lot from scaling features to similar ranges (standardization or min-max). If features vary by orders of magnitude, gradients move in imbalanced directions and convergence slows.
 
-### 4.2 **Regularization (Ridge / L2, Lasso / L1):**
+### 2.2 **Regularization (Ridge / L2, Lasso / L1):**
 To reduce overfitting and stabilize solutions when features are correlated, add penalty terms:
 
 * Ridge (L2): (J(\theta) + \frac{\lambda}{2m}|\theta|_2^2)
@@ -81,7 +81,7 @@ To reduce overfitting and stabilize solutions when features are correlated, add 
 * Stop when the absolute or relative change in loss falls below a tolerance or after a max number of epochs.
 * Use learning curves and validation set to detect under/overfitting.
 
-### 4.3 — Common pitfalls and tips
+### 2.3 — Common pitfalls and tips
 
 * Not scaling features: slows convergence and makes choosing a good learning rate hard.
 * Choosing learning rate by guesswork: use log-scale sweep and pick the largest stable (\alpha).
